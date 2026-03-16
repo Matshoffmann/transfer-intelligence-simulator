@@ -1,223 +1,143 @@
-# Transfer Intelligence Simulator (Bundesliga Edition)
-Decision Support Prototype for Budget-Constrained Recruitment
+# Transfer Intelligence Simulator — Bundesliga Edition
+Decision Support Prototype for Budget-Constrained Recruitment · ESADE Assignment 2
 
-**Live App:**  
-https://transfer-intelligence-simulator-gszqxgguhhieqzifhrfox5.streamlit.app  
+**GitHub Repository:**
+https://github.com/Matshoffmann/transfer-intelligence-simulator
 
-**GitHub Repository:**  
-https://github.com/Matshoffmann/transfer-intelligence-simulator  
+---
 
-## 1) Overview
+## 1. Overview
 
-The Transfer Intelligence Simulator is a Streamlit-based product prototype that supports transfer decision-making for Bundesliga clubs under financial constraints. Instead of simply displaying metrics, the app models a realistic decision workflow:
+The Transfer Intelligence Simulator is a Plotly Dash prototype that supports transfer decision-making for Bundesliga clubs under financial constraints. The app models a realistic recruitment workflow, incorporating five analytical model layers and two non-straightforward LLM integrations powered by Cohere Command R+.
 
-- club-specific squad context (baseline differs by club and by position)
-- tactical fit and projected performance uplift (with uncertainty)
-- financial feasibility and risk
-- A/B candidate comparison
-- position-based shortlist generation with export
-- an interpretable ML layer that estimates **P(Positive Uplift)**
+The intended user is a Sporting Director or Head of Recruitment who needs a structured, transparent, and reproducible way to move from a large candidate pool to a defensible shortlist and transfer decision.
 
-The intended user is a Sporting Director / Head of Recruitment who needs a structured, transparent, and reproducible way to move from “many candidates” to a defensible shortlist and decision.
+---
 
-## 2) Key Product Idea (Why this is not “just a dashboard”)
-
-Transfer decisions are multi-constraint decisions:
-
-- A player can be “good” but not improve the club’s current baseline at that position.
-- A player can improve performance but break wage structure or exceed budget.
-- A player’s projected impact can be highly uncertain when minutes played are low.
-
-This prototype formalizes that logic into a decision-support flow:
-
-1) Set context (club + constraints)  
-2) Evaluate candidate(s) vs that context  
-3) Produce a recommendation and rationale  
-4) Shortlist feasible targets under the same constraints  
-
-
-## 3) Core Features
-
-### 3.1 Club Context (Bundesliga)
-
-- Select a Bundesliga club in the sidebar
-- A reproducible club squad is generated (synthetic, calibrated) so:
-  - squad baselines are club-specific
-  - tactical fit and uplift are computed against *this* squad
-
-### 3.2 Single Transfer Simulation
-
-For one target player:
-
-- Tactical fit score
-- Projected uplift vs squad baseline
-- Uncertainty band (minutes as reliability proxy)
-- Financial risk score (budget, wage capacity, injury risk)
-- ML success probability
-- Decision recommendation (Proceed / Monitor / Avoid) + rationale
-
-### 3.3 A/B Comparison
-
-Compare two candidates under identical constraints:
-
-- Side-by-side metrics (fit, risk, P(success), expected uplift)
-- Comparison chart (expected uplift vs scaled risk)
-- Risk-adjusted recommendation
-
-### 3.4 Shortlist Generator (+ Export)
-
-- Choose position (GK / CB / FB / DM / CM / AM / ST)
-- Choose Top-N
-- Feasibility filtering (budget and wage capacity)
-- Risk-adjusted ranking
-- Export shortlist to CSV via `st.download_button`
-
-## 4) Data and Assumptions
-
-### 4.1 Synthetic dataset (reproducible prototype)
-
-The market dataset is synthetic by design to ensure:
-
-- no external API downtime
-- stable demo and consistent results
-
-The synthetic data is calibrated to resemble plausible football distributions:
-
-- position-specific stat distributions
-- age–market value curve (prime age effect)
-- wage roughly linked to market value
-- injury risk correlated with age
-- minutes used as a reliability proxy
-
-## 5) Modeling Approach (Pipeline)
-
-High-level pipeline:
-
-1) `data_loader`  
-   Generates / loads a synthetic market dataset  
-
-2) `feature_engineering`  
-   Computes a `performance_index` from core stat proxies  
-
-3) `projection_model`  
-   Computes:
-   - baseline performance by position within the selected club squad  
-   - candidate performance  
-   - uplift = candidate − baseline  
-   - uncertainty band (minutes-based reliability proxy)  
-
-4) `financial_model`  
-   Computes a financial risk score using:
-   - market value vs transfer budget  
-   - wage vs wage capacity  
-   - injury risk  
-
-5) `decision_engine`  
-   Converts fit + risk into:
-   - decision score  
-   - recommendation (Proceed / Monitor / Avoid)  
-   - human-readable rationale  
-
-6) ML layer (`ml_model`)  
-   Trains an interpretable logistic regression per club context to estimate:
-   - **P(Positive Uplift)** = probability that uplift > 0 vs the club’s baseline  
-
-7) Streamlit UI (`app/app.py`)  
-   Presents the end-to-end workflow with simulation, comparison and shortlisting  
-
-## 6) ML Layer + Explainability
-
-### 6.1 What the ML model predicts
-
-The model predicts **P(Positive Uplift)**:
-
-- Label definition: `success = 1` if projected uplift > 0, else 0  
-- Training is club-context specific because the baseline depends on the selected squad  
-
-### 6.2 Model Type
-
-- Logistic Regression (interpretable by design)
-- Numeric features:
-  - age
-  - minutes
-  - xG
-  - xA
-  - progressive passes
-  - defensive actions
-  - injury risk
-  - market value
-  - wage
-- Categorical:
-  - position (one-hot encoded)
-
-### 6.3 Model Quality (Prototype)
-
-The app displays:
-
-- training size (N)
-- AUC
-- Accuracy
-
-These metrics are prototype-level metrics on a holdout split within the synthetic dataset.
-
-### 6.4 Explainability
-
-The app includes a dedicated **Model Card & Explainability** section:
-
-- Global importance: absolute logistic coefficients
-- Local explanation: feature-level contribution to predicted probability (log-odds space)
-
-This supports transparency and responsible AI prototyping.
-
-## 7) Limitations (Prototype Scope)
-
-- Synthetic training data; not validated on real event-level match data
-- “Uplift” derived from projection logic, not observed post-transfer outcomes
-- No contract length, agent fees, or sell-on clauses
-- No tactical system metadata beyond position features
-
-## 8) Future Extensions (Production Path)
-
-- Replace synthetic market with real snapshot data (e.g., FBref export)
-- Validate uplift against real match outcomes
-- Separate offline model training from runtime inference
-- Add budget sensitivity stress tests
-- Extend to multi-season financial simulations
-
-## 9) Project Structure
-transfer-intelligence-simulator/
-│
-├── app/
-│ ├── app.py
-│ └── init.py
-│
-├── src/
-│ ├── data_loader.py
-│ ├── feature_engineering.py
-│ ├── projection_model.py
-│ ├── similarity.py
-│ ├── financial_model.py
-│ ├── decision_engine.py
-│ ├── shortlist.py
-│ ├── ml_model.py
-│ └── init.py
-│
-├── data/
-│ ├── raw/
-│ └── processed/
-│
-├── models/
-├── requirements.txt
-└── README.md
-
-## 10) Run Locally
-
-### 10.1 Create / Activate Environment (micromamba example)
+## 2. How to Run Locally
 
 ```bash
+# 1. Create environment
 micromamba create -n tis_bundesliga python=3.11 -y
 micromamba activate tis_bundesliga
-pip install -r requirements.txt
-From the repository root:
 
-streamlit run app/app.py
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Add your Cohere API key
+# Create a .env file in the project root:
+# COHERE_API_KEY=your_key_here
+
+# 4. Run the app
+python app/app_dash.py
+# Open http://127.0.0.1:8050
+```
+
+---
+
+## 3. Features
+
+### Tab 1: Player Intelligence
+Evaluate any market candidate against a selected Bundesliga club's squad:
+- Tactical fit score (position + performance profile match)
+- Projected uplift vs squad baseline with uncertainty band
+- Financial risk score (budget, wage, injury risk)
+- ML success probability P(Positive Uplift)
+- Proceed / Monitor / Avoid recommendation with rationale
+- Radar chart vs squad average
+- Feature contribution chart (log-odds, explainable ML)
+
+### Tab 2: Transfer Comparison
+Head-to-head A/B evaluation of two candidates under identical constraints:
+- Risk-adjusted verdict with winner card
+- Side-by-side score bars
+- Comparative analytics bar chart
+
+### Tab 3: Market Shortlist Generator
+Scan all market players filtered by position, budget, and wage cap:
+- Risk-adjusted ranking
+- Opportunity scatter (Financial Risk vs Expected Uplift)
+- Exportable results table
+
+### Tab 4: AI Transfer Brief (LLM Feature 1)
+Generates a structured executive scouting brief via Cohere Command R+.
+
+Non-straightforward aspects:
+1. All 5 model layers run and their outputs are assembled into a structured context object
+2. Squad peer statistics (depth, average age, average performance index) are computed and injected into the prompt
+3. A role-specific system prompt (senior recruitment analyst persona) with hard JSON output format constraints is constructed
+4. Two-pass JSON extraction handles cases where the model wraps output in markdown or prose
+5. Graceful degradation provides a fallback structured response if parsing fails
+
+### Tab 5: Transfer Intelligence Agent (LLM Feature 2)
+A multi-turn conversational agent backed by Cohere Command R+ with tool calling.
+
+Non-straightforward aspects:
+1. Multi-call architecture: the agent runs a full reasoning loop (think, call tool, observe result, continue)
+2. Two custom tools are available: `simulate_transfer` runs the full 5-layer pipeline for any player/club combination; `generate_shortlist` runs the position-filtered, budget-constrained shortlist engine
+3. The agent decides autonomously which tool to call and in what order based on the user query
+4. Tool results are injected back into the conversation as observations; the agent synthesises them into a final analytical response
+5. Full tool call history is rendered in the UI for transparency
+
+### Tab 6: Model Card
+Interpretable ML layer documentation:
+- Global feature importance (logistic regression coefficients)
+- Training metrics (N, AUC, Accuracy)
+- Limitations and scope
+
+---
+
+## 4. Analytics Pipeline
+
+```
+data_loader          Load synthetic Bundesliga market dataset
+feature_engineering  Compute performance_index from stat proxies
+projection_model     Compute uplift vs club-specific positional baseline
+financial_model      Compute financial risk score (budget, wage, injury)
+decision_engine      Convert fit + risk into recommendation + rationale
+ml_model             Train logistic regression per club: P(Positive Uplift)
+brief_generator      Assemble context and generate LLM scouting brief
+scouting_agent       Multi-turn agent with tool-calling over simulation engine
+```
+
+---
+
+## 5. Data
+
+The market dataset is synthetic by design to ensure no external API dependency and consistent demo results. It is calibrated to resemble plausible football distributions: position-specific stat ranges, age-market value curves, wage proportional to market value, and minutes as a reliability proxy.
+
+---
+
+## 6. Project Structure
+
+```
+transfer_intelligence_simulator/
+├── app/
+│   ├── app_dash.py          Main Dash application (entry point)
+│   └── assets/
+│       └── style.css        Full dark theme design system
+├── src/
+│   ├── data_loader.py
+│   ├── feature_engineering.py
+│   ├── projection_model.py
+│   ├── financial_model.py
+│   ├── decision_engine.py
+│   ├── shortlist.py
+│   ├── ml_model.py
+│   ├── brief_generator.py   LLM Feature 1: AI Transfer Brief
+│   └── scouting_agent.py    LLM Feature 2: Tool-calling Agent
+├── data/
+│   └── processed/
+│       └── bundesliga_players.csv
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 7. Limitations
+
+- Trained on synthetic data; not validated against real transfer outcomes
+- Uplift label derived from projection logic, not observed post-transfer data
+- No contract length, agent fees, or sell-on clauses modelled
+- Intended for decision-support prototyping, not production scouting systems
