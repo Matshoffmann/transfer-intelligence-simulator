@@ -98,7 +98,14 @@ def run_scouting_agent(query, club, squad_df, market_df, model_pipe, transfer_bu
     api_key = os.environ.get("COHERE_API_KEY","")
     if not api_key:
         try:
-            from dotenv import load_dotenv; load_dotenv()
+            from dotenv import load_dotenv
+            # Try UTF-8 first, then UTF-16 (Windows echo sometimes writes UTF-16)
+            from pathlib import Path
+            env_path = Path(__file__).resolve().parent.parent / ".env"
+            try:
+                load_dotenv(dotenv_path=env_path, encoding="utf-8")
+            except Exception:
+                load_dotenv(dotenv_path=env_path, encoding="utf-16")
             api_key = os.environ.get("COHERE_API_KEY","")
         except ImportError:
             pass
