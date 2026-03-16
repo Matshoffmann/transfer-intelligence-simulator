@@ -1,6 +1,9 @@
 # Transfer Intelligence Simulator — Bundesliga Edition
 Decision Support Prototype for Budget-Constrained Recruitment · ESADE Assignment 2
 
+**Live Demo:**
+https://transfer-intelligence-simulator.onrender.com/
+
 **GitHub Repository:**
 https://github.com/Matshoffmann/transfer-intelligence-simulator
 
