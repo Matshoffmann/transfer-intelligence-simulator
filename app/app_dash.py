@@ -341,6 +341,10 @@ sidebar = html.Div(id="sidebar", children=[
             id="sb-club", options=[{"label": c, "value": c} for c in CLUBS],
             value=CLUBS[0], clearable=False, className="sidebar-select",
         ),
+        html.Div(
+            "Select your club. All analyses, squad comparisons, and AI briefs will be tailored to this club's squad profile.",
+            className="sidebar-hint"
+        ),
     ]),
 
     html.Hr(className="sidebar-divider"),
@@ -350,6 +354,10 @@ sidebar = html.Div(id="sidebar", children=[
         dcc.Slider(id="sb-budget", min=5, max=80, step=1, value=30,
                    marks={5: "5", 40: "40", 80: "80"},
                    tooltip={"placement": "bottom", "always_visible": True}),
+        html.Div(
+            "Maximum transfer fee you are willing to pay. Players above this threshold are flagged as financially infeasible.",
+            className="sidebar-hint"
+        ),
     ]),
 
     html.Div(className="sidebar-section", children=[
@@ -357,6 +365,10 @@ sidebar = html.Div(id="sidebar", children=[
         dcc.Slider(id="sb-wage", min=1, max=30, step=1, value=8,
                    marks={1: "1", 15: "15", 30: "30"},
                    tooltip={"placement": "bottom", "always_visible": True}),
+        html.Div(
+            "Maximum annual salary you can offer. Candidates exceeding this cap receive a higher financial risk score.",
+            className="sidebar-hint"
+        ),
     ]),
 
     html.Hr(className="sidebar-divider"),

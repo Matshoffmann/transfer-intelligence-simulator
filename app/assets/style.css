@@ -110,6 +110,13 @@ body {
 
 .sidebar-section { margin-bottom: 22px; }
 
+.sidebar-hint {
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
 .sidebar-divider {
   border: none;
   border-top: 1px solid var(--border);
