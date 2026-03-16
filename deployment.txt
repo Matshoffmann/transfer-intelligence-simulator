@@ -1,1 +1,2 @@
 https://transfer-intelligence-simulator.onrender.com/
+#runs after 50-60 seconds#
