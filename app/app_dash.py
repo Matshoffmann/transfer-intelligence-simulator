@@ -316,6 +316,13 @@ def _brief_section(icon, icon_cls, title, body):
     ])
 
 
+def _chart_note(text):
+    return html.Div(text, style={
+        "fontSize": "12px", "color": "#8b949e", "marginTop": "6px",
+        "lineHeight": "1.55", "paddingLeft": "2px"
+    })
+
+
 def _empty_state(icon, title, subtitle):
     return html.Div(className="empty-state", children=[
         html.Div(icon, className="empty-state-icon"),
@@ -633,13 +640,14 @@ def render_player_tab(player_name, club, budget, wage):
         ], className="g-2 mb-3"),
         html.Div("Radar Profile vs Squad Baseline", className="sh"),
         dbc.Row([
-            dbc.Col(dcc.Graph(figure=_radar_fig(row, sq), config={"displayModeBar": False}),
-                    width=6),
+            dbc.Col([
+                dcc.Graph(figure=_radar_fig(row, sq), config={"displayModeBar": False}),
+                _chart_note("The radar compares the player's key stats against the current squad average at the same position. A larger green area means the player outperforms the squad baseline. Blue shows the squad average. All values are normalised to the top 5% of the market."),
+            ], width=6),
             dbc.Col([
                 html.Div("Feature Contributions to P(Success)", className="card-label mb-2"),
                 dcc.Graph(figure=_feature_fig(expl), config={"displayModeBar": False}),
-                html.Div("Green increases · Red decreases P(success)",
-                         style={"fontSize": "11px", "color": "#8b949e", "marginTop": "4px"}),
+                _chart_note("Each bar shows how strongly a player attribute pushes the ML success probability up (green) or down (red). The longer the bar, the more influential that attribute is for this specific player."),
             ], width=6),
         ]),
         html.Div("Projected Performance Impact", className="sh"),
@@ -654,6 +662,7 @@ def render_player_tab(player_name, club, budget, wage):
             b["uplift"]["baseline"], b["uplift"]["player_perf"],
             b["uplift"]["uncertainty_sigma"], pname),
             config={"displayModeBar": False}),
+        _chart_note("Blue bar: current squad average performance at this position. Green bar: player's projected performance index. A higher green bar means the player would improve the squad. The orange line shows the uncertainty range — a wider range means fewer minutes played and lower confidence in the projection."),
         dbc.Accordion([
             dbc.AccordionItem(
                 html.Div(children=[
@@ -747,6 +756,7 @@ def render_comparison(pA, pB, club, budget, wage):
                 dbc.Col(_kpi("Exp. Uplift",f"{b['expected_uplift']:+.3f}"), width=6),
             ], className="g-2 mb-3"),
             dcc.Graph(figure=_radar_fig(row, sq), config={"displayModeBar": False}),
+            _chart_note("Green = this player. Blue = squad average at same position."),
             dbc.Accordion([
                 dbc.AccordionItem(
                     html.Ul([html.Li(r, style={"fontSize": "13px"})
@@ -778,6 +788,7 @@ def render_comparison(pA, pB, club, budget, wage):
         ]),
         html.Div("Head-to-Head Analytics", className="sh"),
         dcc.Graph(figure=fig, config={"displayModeBar": False}),
+        _chart_note("Side-by-side comparison across four metrics (all normalised to 0-1 scale). Higher is better for Tactical Fit and P(Success). For Financial Risk, lower is better. Expected Uplift can be negative if the player is projected to underperform the squad baseline at their position."),
     ])
 
 
@@ -839,6 +850,7 @@ def generate_shortlist(n, pos, top_n, club, budget, wage):
     content = html.Div([
         html.Div("Market Opportunity Map", className="sh"),
         dcc.Graph(figure=fig, config={"displayModeBar": False}),
+        _chart_note("Each bubble is a transfer candidate. Top-left is ideal: high expected uplift, low financial risk. Bubble size represents market value. Color shows the system recommendation — green (Proceed), orange (Monitor), red (Avoid). Only players within budget and wage constraints are shown."),
         html.Div("Candidate Rankings", className="sh"),
         dbc.Table.from_dataframe(tbl_df, striped=True, hover=True, size="sm",
                                  style={"fontSize": "13px"}),
@@ -1062,6 +1074,7 @@ market value, wage, position (one-hot encoded).
                                           style={"fontSize": "12px", "color": "#8b949e"}),
         html.Div("Global Feature Importance", className="sh"),
         dcc.Graph(figure=fig, config={"displayModeBar": False}),
+        _chart_note("These bars show which player attributes have the strongest influence on the model's transfer success prediction. Longer bar = more important. This is a global view across all players — it shows what the model considers most relevant when deciding whether a transfer will generate positive performance uplift for this club."),
         html.Div("Limitations & Scope", className="sh"),
         dcc.Markdown("""
 - Trained on **synthetic** data; not validated against real transfer outcomes.
