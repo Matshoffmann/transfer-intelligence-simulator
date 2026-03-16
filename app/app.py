@@ -654,9 +654,14 @@ with t4:
         st.session_state["agent_history"] = []
 
     for msg in st.session_state["agent_history"]:
-        if   msg["role"]=="user":      st.markdown(f'<div class="msg-user">{msg["content"]}</div>', unsafe_allow_html=True)
-        elif msg["role"]=="tool_call": st.markdown(f'<div class="msg-tool">Tool call: {msg["content"]}</div>', unsafe_allow_html=True)
-        else:                          st.markdown(f'<div class="msg-ai">{msg["content"]}</div>', unsafe_allow_html=True)
+        if msg["role"] == "user":
+            st.markdown(f'<div class="msg-user">{msg["content"]}</div>', unsafe_allow_html=True)
+        elif msg["role"] == "tool_call":
+            pass  # hidden from user
+        elif msg["role"] == "assistant":
+            st.markdown('<div class="msg-ai">', unsafe_allow_html=True)
+            st.markdown(msg["content"])
+            st.markdown('</div>', unsafe_allow_html=True)
 
     user_q = st.text_input(
         "Query", value=st.session_state.pop("agent_input",""),
