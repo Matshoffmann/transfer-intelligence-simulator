@@ -1075,4 +1075,6 @@ market value, wage, position (one-hot encoded).
 
 # ── Run ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    app.run(debug=True, dev_tools_ui=False, port=8050)
+    port = int(os.environ.get("PORT", 8050))
+    debug = os.environ.get("RENDER") is None  # debug off on Render, on locally
+    app.run(host="0.0.0.0", port=port, debug=debug, dev_tools_ui=False)
