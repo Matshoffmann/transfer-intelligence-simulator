@@ -626,8 +626,8 @@ def update_sidebar(club, budget, wage):
             html.Span(club, style={"marginLeft": "6px"}),
         ]),
         html.Span(f"€{budget}M Budget", className="hero-badge"),
-        html.Span("ML · P(Uplift)", className="hero-badge"),
-        html.Span("Cohere Agent", className="hero-badge"),
+        html.Span("Success Prediction", className="hero-badge"),
+        html.Span("AI Scouting Assistant", className="hero-badge"),
         html.Span("250 Market Players", className="hero-badge"),
     ]
     return card, badges
