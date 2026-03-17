@@ -206,7 +206,7 @@ def _radar_fig(player_row, squad_df):
         paper_bgcolor=_BG, showlegend=True,
         legend=dict(font=dict(color=_TEXT, size=11), bgcolor=_BG2,
                     bordercolor=_LINE),
-        height=300, margin=dict(t=16, l=16, r=16, b=16))
+        height=320, margin=dict(t=16, l=16, r=16, b=16))
     return fig
 
 
@@ -218,7 +218,7 @@ def _feature_fig(expl):
     fig = go.Figure(go.Bar(
         x=expl["contribution"], y=labels, orientation="h",
         marker_color=colors, marker_line_width=0))
-    fig.update_layout(**{**CHART, "height": 280,
+    fig.update_layout(**{**CHART, "height": 320,
                           "xaxis": {"title": "Log-odds contribution",
                                     "gridcolor": _GRID,
                                     "linecolor": _LINE,
