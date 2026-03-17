@@ -382,6 +382,13 @@ body {
 .verdict-card {
   background: var(--bg-2); border: 1px solid var(--border);
   border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 14px;
+  flex: 1;
+}
+.verdict-card .chip {
+  font-size: 16px;
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  letter-spacing: 0.5px;
 }
 .verdict-scores { display: flex; gap: 24px; margin: 12px 0 10px; }
 .verdict-score-item .v-label {

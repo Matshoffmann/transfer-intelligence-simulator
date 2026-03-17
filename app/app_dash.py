@@ -673,16 +673,16 @@ def render_player_tab(player_name, club, budget, wage):
             dbc.Col(_verdict_card(
                 rec, b["decision"]["decision_score"],
                 b["decision"]["risk_level"], risk,
-                b["decision"]["reasons"]), width=7),
-            dbc.Col(html.Div(className="card-base", children=[
+                b["decision"]["reasons"]), width=7, style={"display": "flex", "flexDirection": "column"}),
+            dbc.Col(html.Div(className="card-base h-100", children=[
                 html.Div("Evaluation Scores", className="card-label mb-3"),
                 _score_bar("Tactical Fit", fit, "#3b82f6"),
                 _score_bar("Financial Risk", risk, invert=True),
                 _score_bar("ML Success Probability", p_s * 100, "#22c55e"),
                 _score_bar("Expected Uplift (norm.)",
                            max(min((eu + 1) / 2 * 100, 100), 0), "#a855f7"),
-            ]), width=5),
-        ]),
+            ]), width=5, style={"display": "flex", "flexDirection": "column"}),
+        ], className="align-items-stretch"),
         html.Div("Performance & ML Layer", className="sh"),
         dbc.Row([
             dbc.Col(_kpi("Fit Score", f"{fit:.1f}"), width=True),
@@ -691,14 +691,14 @@ def render_player_tab(player_name, club, budget, wage):
             dbc.Col(_kpi("P(Positive Uplift)", f"{p_s:.3f}"), width=True),
             dbc.Col(_kpi("Expected Uplift", f"{eu:+.3f}"), width=True),
         ], className="g-2 mb-3"),
-        html.Div("Radar Profile vs Squad Baseline", className="sh"),
         dbc.Row([
             dbc.Col([
+                html.Div("Radar Profile vs Squad Baseline", className="sh"),
                 dcc.Graph(figure=_radar_fig(row, sq), config={"displayModeBar": False}),
                 _chart_note("The radar compares the player's key stats against the current squad average at the same position. A larger green area means the player outperforms the squad baseline. Blue shows the squad average. All values are normalised to the top 5% of the market."),
             ], width=6),
             dbc.Col([
-                html.Div("Feature Contributions to P(Success)", className="card-label mb-2"),
+                html.Div("Feature Contributions to P(Success)", className="sh"),
                 dcc.Graph(figure=_feature_fig(expl), config={"displayModeBar": False}),
                 _chart_note("Each bar shows how strongly a player attribute pushes the ML success probability up (green) or down (red). The longer the bar, the more influential that attribute is for this specific player."),
             ], width=6),
