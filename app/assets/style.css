@@ -576,10 +576,10 @@ input.form-control::placeholder { color: var(--text-2) !important; }
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 13px; margin-right: 8px; flex-shrink: 0;
 }
-.brief-icon-blue   { background: var(--accent-bg);  }
-.brief-icon-green  { background: var(--green-bg);   }
-.brief-icon-orange { background: var(--orange-bg);  }
-.brief-icon-red    { background: var(--red-bg);     }
+.brief-icon-blue   { background: var(--accent-bg);  color: var(--accent);  }
+.brief-icon-green  { background: var(--green-bg);   color: var(--green);   }
+.brief-icon-orange { background: var(--orange-bg);  color: var(--orange);  }
+.brief-icon-red    { background: var(--red-bg);     color: var(--red);     }
 .brief-section-label {
   font-size: 9px; font-weight: 700; color: var(--text-2);
   text-transform: uppercase; letter-spacing: 1px;

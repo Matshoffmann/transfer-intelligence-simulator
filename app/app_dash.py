@@ -41,7 +41,10 @@ from src.scouting_agent import run_scouting_agent
 # ── App init ──────────────────────────────────────────────────────────────────
 app = dash.Dash(
     __name__,
-    external_stylesheets=[dbc.themes.BOOTSTRAP],
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP,
+        "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css",
+    ],
     suppress_callback_exceptions=True,
     title="Transfer Intelligence · Bundesliga",
 )
@@ -342,6 +345,9 @@ def _kpi(label, value):
 def _brief_section(icon, icon_cls, title, body):
     return html.Div(className="brief-section", children=[
         html.Div(className="d-flex align-items-center", children=[
+            html.Span(className=f"brief-icon {icon_cls}", children=[
+                html.I(className=f"bi {icon}"),
+            ]),
             html.Span(title, className="brief-section-label"),
         ]),
         html.Div(body, className="brief-body"),
@@ -990,11 +996,11 @@ def generate_brief(n, player_name, club, budget, wage):
             html.Span("AI-generated · Cohere Command R+",
                       style={"fontSize": "11px", "color": "#8b949e", "marginLeft": "8px"}),
         ]),
-        _brief_section("—", "brief-icon-blue",   "Summary",                       brief.get("executive_summary", "")),
-        _brief_section("—", "brief-icon-green",  "On the Pitch",                  brief.get("performance_verdict", "")),
-        _brief_section("—", "brief-icon-orange", "Financial Picture",              brief.get("financial_assessment", "")),
-        _brief_section("—", "brief-icon-red",    "Risks to Consider",             brief.get("risk_factors", "")),
-        _brief_section("—", "brief-icon-blue",   "What We Recommend",             brief.get("recommendation", "")),
+        _brief_section("bi-file-earmark-text", "brief-icon-blue",   "Summary",           brief.get("executive_summary", "")),
+        _brief_section("bi-graph-up-arrow",    "brief-icon-green",  "On the Pitch",      brief.get("performance_verdict", "")),
+        _brief_section("bi-coin",              "brief-icon-orange", "Financial Picture",  brief.get("financial_assessment", "")),
+        _brief_section("bi-exclamation-triangle", "brief-icon-red", "Risks to Consider", brief.get("risk_factors", "")),
+        _brief_section("bi-check-circle",      "brief-icon-blue",   "What We Recommend", brief.get("recommendation", "")),
         html.Div("Based on synthetic data. For demonstration purposes only.",
                  style={"fontSize": "11px", "color": "#8b949e", "marginTop": "8px"}),
         dbc.Alert(warn, color="warning", className="rounded-3 mt-2") if warn else html.Div(),
