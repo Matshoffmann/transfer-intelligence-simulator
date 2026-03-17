@@ -621,7 +621,10 @@ def update_sidebar(club, budget, wage):
     sq, _, _ = get_context(club, budget, wage)
     card = _build_club_card(club, budget, wage, sq)
     badges = [
-        html.Span(f"⚽ {club}", className="hero-badge primary"),
+        html.Span(className="hero-badge primary", children=[
+            _club_logo(club, size=16),
+            html.Span(club, style={"marginLeft": "6px"}),
+        ]),
         html.Span(f"€{budget}M Budget", className="hero-badge"),
         html.Span("ML · P(Uplift)", className="hero-badge"),
         html.Span("Cohere Agent", className="hero-badge"),
