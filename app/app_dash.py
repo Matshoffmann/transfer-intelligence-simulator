@@ -342,7 +342,6 @@ def _kpi(label, value):
 def _brief_section(icon, icon_cls, title, body):
     return html.Div(className="brief-section", children=[
         html.Div(className="d-flex align-items-center", children=[
-            html.Span(icon, className=f"brief-icon {icon_cls}"),
             html.Span(title, className="brief-section-label"),
         ]),
         html.Div(body, className="brief-body"),
@@ -466,7 +465,7 @@ def _tab1():
 def _tab2():
     return html.Div([
         html.Div("Head-to-Head Comparison", className="section-title"),
-        html.Div("Compare two candidates directly. Same squad context, same constraints — see who comes out ahead.",
+        html.Div("Compare two candidates directly. Same squad context, same constraints. See who comes out ahead.",
                  className="section-sub"),
         dbc.Row([
             dbc.Col(dcc.Dropdown(id="t2-pa", options=PLAYER_OPTIONS,
@@ -562,7 +561,7 @@ def _tab5():
 def _tab6():
     return html.Div([
         html.Div("How the Scores Work", className="section-title"),
-        html.Div("A plain-language explanation of what drives each recommendation — and where to treat the numbers with caution.",
+        html.Div("A plain-language explanation of what drives each recommendation, and where to treat the numbers with caution.",
                  className="section-sub"),
         dcc.Loading(html.Div(id="t6-content"), type="circle", color="#2563eb"),
     ])
@@ -572,8 +571,8 @@ def _tab6():
 hero = html.Div(className="hero", children=[
     html.Div("Bundesliga · Recruitment Intelligence", className="hero-eyebrow"),
     html.Div("Transfer Intelligence Simulator", className="hero-title"),
-    html.Div("Know who to sign, who to watch, and who to pass on — "
-             "before you spend a single euro. Built for Sporting Directors "
+    html.Div("Know who to sign, who to watch, and who to pass on. "
+             "Before you spend a single euro. Built for Sporting Directors "
              "who need fast, grounded decisions under budget pressure.", className="hero-sub"),
     html.Div(id="hero-badges", className="hero-badges"),
 ])
@@ -642,7 +641,7 @@ def update_sidebar(club, budget, wage):
 def update_agent_sub(club, budget, wage):
     return (f"Your recruitment assistant for {club}. "
             f"Budget: €{budget}M · Wage cap: €{wage}M/yr. "
-            "Ask in plain language — it runs the analysis and comes back with a clear answer.")
+            "Ask in plain language. It runs the analysis and comes back with a clear answer.")
 
 
 # ── TAB 1 — Player Intelligence ───────────────────────────────────────────────
@@ -714,11 +713,11 @@ def render_player_tab(player_name, club, budget, wage):
             b["uplift"]["baseline"], b["uplift"]["player_perf"],
             b["uplift"]["uncertainty_sigma"], pname),
             config={"displayModeBar": False}),
-        _chart_note("Blue bar: current squad average performance at this position. Green bar: player's projected performance index. A higher green bar means the player would improve the squad. The orange line shows the uncertainty range — a wider range means fewer minutes played and lower confidence in the projection."),
+        _chart_note("Blue bar: current squad average performance at this position. Green bar: the player's projected level. A higher green bar means a clear upgrade. The orange line shows the confidence range. A wider range means fewer minutes played and less certainty in the projection."),
         dbc.Accordion([
             dbc.AccordionItem(
                 html.Div(children=[
-                    html.P("Current squad composition by position — depth and average performance levels.",
+                    html.P("Current squad composition by position, with depth and average performance levels.",
                            style={"fontSize": "13px", "color": "#8b949e"}),
                     html.Div(_squad_table(sq)),
                 ], style={"padding": "4px"}),
@@ -776,7 +775,7 @@ def render_comparison(pA, pB, club, budget, wage):
                            style={"borderLeftColor": wcolor}, children=[
         html.Div("Better Option", className="card-label"),
         html.Div(winner, className="winner-name"),
-        html.Div(f"Scored higher on performance upside vs. financial risk — gap: {delta:.2f}",
+        html.Div(f"Scored higher on performance upside vs. financial risk. Gap: {delta:.2f}",
                  className="winner-sub"),
     ])
 
@@ -902,7 +901,7 @@ def generate_shortlist(n, pos, top_n, club, budget, wage):
     content = html.Div([
         html.Div("Opportunity Map", className="sh"),
         dcc.Graph(figure=fig, config={"displayModeBar": False}),
-        _chart_note("Each bubble is a candidate within your budget. Top-left is the sweet spot — high upside, low financial risk. Bubble size reflects market value. Green = Sign, Orange = Watch, Red = Pass."),
+        _chart_note("Each bubble is a candidate within your budget. Top-left is the sweet spot: high upside, low financial risk. Bubble size reflects market value. Green = Sign, Orange = Watch, Red = Pass."),
         html.Div("Ranked Candidates", className="sh"),
         dbc.Table.from_dataframe(tbl_df, striped=True, hover=True, size="sm",
                                  style={"fontSize": "13px"}),
@@ -981,7 +980,7 @@ def generate_brief(n, player_name, club, budget, wage):
     return html.Div([
         html.Div(className="d-flex align-items-center gap-2 mb-1", children=[
             _club_logo(club, size=28),
-            html.Div("Scouting Report: " + player_name.replace("_", " ") + " — " + club,
+            html.Div("Scouting Report: " + player_name.replace("_", " ") + " to " + club,
                      className="sh", style={"margin": "0"}),
         ]),
         html.Div(className="d-flex align-items-center gap-3 mb-3", children=[
