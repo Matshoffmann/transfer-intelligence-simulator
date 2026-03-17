@@ -178,7 +178,7 @@ CHART = dict(
 def _radar_fig(player_row, squad_df):
     pos  = player_row["position"]
     base = squad_df[squad_df["position"] == pos]
-    cats = ["xG", "xA", "Prog Passes", "Def Actions", "Minutes"]
+    cats = ["Goals", "Assists", "Progressive Passes", "Defensive Actions", "Minutes Played"]
     pv = [float(player_row["xg"]), float(player_row["xa"]),
           float(player_row["progressive_passes"]),
           float(player_row["defensive_actions"]),
@@ -209,7 +209,7 @@ def _radar_fig(player_row, squad_df):
         paper_bgcolor=_BG, showlegend=True,
         legend=dict(font=dict(color=_TEXT, size=11), bgcolor=_BG2,
                     bordercolor=_LINE),
-        height=320, margin=dict(t=16, l=16, r=16, b=16))
+        height=320, margin=dict(t=16, l=80, r=80, b=16))
     return fig
 
 
