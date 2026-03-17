@@ -131,6 +131,12 @@ body {
   padding: 16px;
   margin-bottom: 20px;
 }
+.club-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
 .club-card-name {
   font-size: 14px;
   font-weight: 700;
@@ -141,7 +147,7 @@ body {
 .club-card-meta {
   font-size: 11px;
   color: var(--text-1);
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 .club-stat-row { display: flex; gap: 8px; }
 .club-stat {

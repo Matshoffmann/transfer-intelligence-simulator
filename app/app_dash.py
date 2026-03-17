@@ -62,6 +62,39 @@ POS_COLORS = {
 }
 DEC_COLORS = {"Proceed": "#16a34a", "Monitor": "#d97706", "Avoid": "#dc2626"}
 
+# ── Club logos (football-data.org public CDN — no auth required) ──────────────
+_CREST_BASE = "https://crests.football-data.org/{}.png"
+CLUB_LOGOS = {
+    "FC Bayern München":          _CREST_BASE.format(5),
+    "Borussia Dortmund":          _CREST_BASE.format(4),
+    "RB Leipzig":                 _CREST_BASE.format(721),
+    "Bayer 04 Leverkusen":        _CREST_BASE.format(3),
+    "Eintracht Frankfurt":        _CREST_BASE.format(19),
+    "SC Freiburg":                _CREST_BASE.format(17),
+    "VfB Stuttgart":              _CREST_BASE.format(10),
+    "TSG Hoffenheim":             _CREST_BASE.format(720),
+    "1. FSV Mainz 05":            _CREST_BASE.format(15),
+    "Borussia Mönchengladbach":   _CREST_BASE.format(18),
+    "VfL Wolfsburg":              _CREST_BASE.format(11),
+    "Werder Bremen":              _CREST_BASE.format(12),
+    "FC Augsburg":                _CREST_BASE.format(16),
+    "1. FC Köln":                 _CREST_BASE.format(1),
+    "Union Berlin":               _CREST_BASE.format(28),
+    "VfL Bochum":                 _CREST_BASE.format(36),
+    "1. FC Heidenheim":           _CREST_BASE.format(387),
+    "SV Darmstadt 98":            _CREST_BASE.format(94),
+}
+
+
+def _club_logo(club, size=32):
+    url = CLUB_LOGOS.get(club)
+    if not url:
+        return html.Span()
+    return html.Img(src=url, style={
+        "width": f"{size}px", "height": f"{size}px",
+        "objectFit": "contain", "flexShrink": "0",
+    })
+
 # ── Data + model cache ────────────────────────────────────────────────────────
 market_df = load_dataset()
 market_df = compute_performance_index(market_df)
@@ -382,9 +415,14 @@ def _build_club_card(club, budget, wage, squad_df):
     avg_age = squad_df["age"].mean()
     avg_val = squad_df["market_value_m"].mean()
     return html.Div(className="club-card", children=[
-        html.Div(club, className="club-card-name"),
-        html.Div(f"{len(squad_df)} players · {len(squad_df['position'].unique())} positions",
-                 className="club-card-meta"),
+        html.Div(className="club-card-header", children=[
+            _club_logo(club, size=36),
+            html.Div([
+                html.Div(club, className="club-card-name"),
+                html.Div(f"{len(squad_df)} players · {len(squad_df['position'].unique())} positions",
+                         className="club-card-meta"),
+            ]),
+        ]),
         html.Div(className="club-stat-row", children=[
             html.Div(className="club-stat", children=[
                 html.Div("Budget", className="club-stat-label"),
@@ -939,8 +977,11 @@ def generate_brief(n, player_name, club, budget, wage):
     chip_icon= {"Proceed": "✓", "Monitor": "~", "Avoid": "✕"}
 
     return html.Div([
-        html.Div("Transfer Brief: " + player_name.replace("_", " ") + " to " + club,
-                 className="sh"),
+        html.Div(className="d-flex align-items-center gap-2 mb-1", children=[
+            _club_logo(club, size=28),
+            html.Div("Transfer Brief: " + player_name.replace("_", " ") + " to " + club,
+                     className="sh", style={"margin": "0"}),
+        ]),
         html.Div(className="d-flex align-items-center gap-3 mb-3", children=[
             html.Span(f'{chip_icon.get(rec,"·")} {rec}',
                       className=f"chip {chip_cls.get(rec,'')}"),
