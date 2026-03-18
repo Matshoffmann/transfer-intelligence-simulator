@@ -319,9 +319,11 @@ def _verdict_card(rec, score, risk_lbl, risk_val, reasons):
     ])
 
 
-def _score_bar(label, value, color="#3b82f6", invert=False):
+def _score_bar(label, value, color=None, invert=False):
     if invert:
         color = "#ef4444" if value > 65 else ("#f59e0b" if value > 35 else "#22c55e")
+    else:
+        color = "#22c55e" if value > 65 else ("#f59e0b" if value > 35 else "#ef4444")
     pct = min(value, 100)
     return html.Div(className="score-bar-wrap", children=[
         html.Div(className="score-bar-header", children=[
@@ -680,11 +682,11 @@ def render_player_tab(player_name, club, budget, wage):
                 b["decision"]["reasons"]), width=7, style={"display": "flex", "flexDirection": "column"}),
             dbc.Col(html.Div(className="card-base h-100", children=[
                 html.Div("Scores at a Glance", className="card-label mb-3"),
-                _score_bar("Squad Fit", fit, "#3b82f6"),
+                _score_bar("Squad Fit", fit),
                 _score_bar("Financial Risk", risk, invert=True),
-                _score_bar("Success Probability", p_s * 100, "#22c55e"),
+                _score_bar("Success Probability", p_s * 100),
                 _score_bar("Uplift Potential",
-                           max(min((eu + 1) / 2 * 100, 100), 0), "#a855f7"),
+                           max(min((eu + 1) / 2 * 100, 100), 0)),
             ]), width=5, style={"display": "flex", "flexDirection": "column"}),
         ], className="align-items-stretch"),
         html.Div("Performance Summary", className="sh"),
