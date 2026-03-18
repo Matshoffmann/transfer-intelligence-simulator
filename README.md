@@ -4,6 +4,8 @@ Decision Support Prototype for Budget-Constrained Recruitment · ESADE Assignmen
 **Live Demo:**
 https://transfer-intelligence-simulator.onrender.com/
 
+> Note: The app is hosted on Render's free tier. On first load after inactivity, the server spins up in approximately 50–60 seconds. Subsequent interactions are immediate.
+
 **GitHub Repository:**
 https://github.com/Matshoffmann/transfer-intelligence-simulator
 
@@ -14,6 +16,8 @@ https://github.com/Matshoffmann/transfer-intelligence-simulator
 The Transfer Intelligence Simulator is a Plotly Dash prototype that supports transfer decision-making for Bundesliga clubs under financial constraints. The app models a realistic recruitment workflow, incorporating five analytical model layers and two non-straightforward LLM integrations powered by Cohere Command R+.
 
 The intended user is a Sporting Director or Head of Recruitment who needs a structured, transparent, and reproducible way to move from a large candidate pool to a defensible shortlist and transfer decision.
+
+The dataset contains 277 real Bundesliga 2025/26 players (Manuel Neuer, Harry Kane, Jamal Musiala, etc.) with synthetically generated performance statistics calibrated to realistic distributions.
 
 ---
 
@@ -40,29 +44,30 @@ python app/app_dash.py
 
 ## 3. Features
 
-### Tab 1: Player Intelligence
+### Tab 1: Player Analysis
 Evaluate any market candidate against a selected Bundesliga club's squad:
 - Tactical fit score (position + performance profile match)
 - Projected uplift vs squad baseline with uncertainty band
 - Financial risk score (budget, wage, injury risk)
 - ML success probability P(Positive Uplift)
-- Proceed / Monitor / Avoid recommendation with rationale
-- Radar chart vs squad average
+- Sign / Watch / Pass recommendation with rationale
+- Color-coded score bars (green = good, yellow = moderate, red = risk)
+- Radar chart vs squad average (Goals, Assists, Progressive Passes, Defensive Actions, Minutes Played)
 - Feature contribution chart (log-odds, explainable ML)
 
-### Tab 2: Transfer Comparison
-Head-to-head A/B evaluation of two candidates under identical constraints:
+### Tab 2: Head-to-Head
+Side-by-side A/B evaluation of two candidates under identical constraints:
 - Risk-adjusted verdict with winner card
-- Side-by-side score bars
+- Side-by-side color-coded score bars
 - Comparative analytics bar chart
 
-### Tab 3: Market Shortlist Generator
+### Tab 3: Market Scan
 Scan all market players filtered by position, budget, and wage cap:
 - Risk-adjusted ranking
 - Opportunity scatter (Financial Risk vs Expected Uplift)
 - Exportable results table
 
-### Tab 4: AI Transfer Brief (LLM Feature 1)
+### Tab 4: Scouting Report (LLM Feature 1)
 Generates a structured executive scouting brief via Cohere Command R+.
 
 Non-straightforward aspects:
@@ -72,7 +77,7 @@ Non-straightforward aspects:
 4. Two-pass JSON extraction handles cases where the model wraps output in markdown or prose
 5. Graceful degradation provides a fallback structured response if parsing fails
 
-### Tab 5: Transfer Intelligence Agent (LLM Feature 2)
+### Tab 5: Ask the Scout (LLM Feature 2)
 A multi-turn conversational agent backed by Cohere Command R+ with tool calling.
 
 Non-straightforward aspects:
@@ -82,22 +87,22 @@ Non-straightforward aspects:
 4. Tool results are injected back into the conversation as observations; the agent synthesises them into a final analytical response
 5. Full tool call history is rendered in the UI for transparency
 
-### Tab 6: Model Card
+### Tab 6: How It Works
 Interpretable ML layer documentation:
 - Global feature importance (logistic regression coefficients)
 - Training metrics (N, AUC, Accuracy)
-- Limitations and scope
+- Model card with limitations and scope
 
 ---
 
 ## 4. Analytics Pipeline
 
 ```
-data_loader          Load synthetic Bundesliga market dataset
-feature_engineering  Compute performance_index from stat proxies
+data_loader          Load Bundesliga player dataset (277 real 2025/26 players)
+feature_engineering  Compute performance_index from core stat proxies
 projection_model     Compute uplift vs club-specific positional baseline
 financial_model      Compute financial risk score (budget, wage, injury)
-decision_engine      Convert fit + risk into recommendation + rationale
+decision_engine      Convert fit + risk into Sign / Watch / Pass recommendation
 ml_model             Train logistic regression per club: P(Positive Uplift)
 brief_generator      Assemble context and generate LLM scouting brief
 scouting_agent       Multi-turn agent with tool-calling over simulation engine
@@ -107,7 +112,7 @@ scouting_agent       Multi-turn agent with tool-calling over simulation engine
 
 ## 5. Data
 
-The market dataset is synthetic by design to ensure no external API dependency and consistent demo results. It is calibrated to resemble plausible football distributions: position-specific stat ranges, age-market value curves, wage proportional to market value, and minutes as a reliability proxy.
+The dataset uses real Bundesliga 2025/26 player names and positions (277 players across all 18 clubs), with synthetically generated performance statistics. This approach ensures no external API dependency and consistent demo results, while making the prototype feel grounded in the real league context. The architecture allows straightforward replacement with real event-level data (e.g., FBref, StatsBomb).
 
 ---
 
@@ -118,16 +123,16 @@ transfer_intelligence_simulator/
 ├── app/
 │   ├── app_dash.py          Main Dash application (entry point)
 │   └── assets/
-│       └── style.css        Full dark theme design system
+│       └── style.css        Full dark theme design system (~650 lines)
 ├── src/
-│   ├── data_loader.py
+│   ├── data_loader.py       Dataset generation with real player names
 │   ├── feature_engineering.py
 │   ├── projection_model.py
 │   ├── financial_model.py
-│   ├── decision_engine.py
+│   ├── decision_engine.py   Sign / Watch / Pass decision logic
 │   ├── shortlist.py
 │   ├── ml_model.py
-│   ├── brief_generator.py   LLM Feature 1: AI Transfer Brief
+│   ├── brief_generator.py   LLM Feature 1: Scouting Report
 │   └── scouting_agent.py    LLM Feature 2: Tool-calling Agent
 ├── data/
 │   └── processed/
@@ -140,7 +145,8 @@ transfer_intelligence_simulator/
 
 ## 7. Limitations
 
-- Trained on synthetic data; not validated against real transfer outcomes
-- Uplift label derived from projection logic, not observed post-transfer data
+- Performance statistics are synthetic; not validated against real match data
+- Uplift label derived from projection logic, not observed post-transfer outcomes
 - No contract length, agent fees, or sell-on clauses modelled
 - Intended for decision-support prototyping, not production scouting systems
+- Hosted on Render free tier: cold-start latency of ~60 seconds after inactivity
